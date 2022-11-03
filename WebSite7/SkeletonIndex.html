@@ -1,0 +1,768 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <script>
+        colors = ["yellow", "blue", "red", "green"];
+        types = [1, 3, 4, 5, 6, 7, 8, 9, "changesDirection", "2plush", "stop", "taki"];
+        //card object
+        function card(type, color) {
+            this.color = color;
+            this.type = type;
+            this.pic = "\"images/" + this.type + "_" + this.color + ".jpg\"";   
+        }
+
+        //cashier object
+        function cashier() {
+            this.cardsarr = [];
+            //create cards
+            this.createcards = function () {
+                for (var i = 0; i < types.length; i++) {
+                    for (var j = 0; j < colors.length; j++) {
+                        c = new card(types[i], colors[j]);
+                        this.cardsarr.push(c);
+                    }
+
+                }
+                c = new card("color", "changer");
+                this.cardsarr.push(c);
+                this.cardsarr.push(c);
+            }
+            //shuffle cards
+           this.shufflecards= function () {
+               for (var i = this.cardsarr.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                   var temp = this.cardsarr[i];
+                   this.cardsarr[i] = this.cardsarr[j];
+                   this.cardsarr[j] = temp;
+                }
+            }
+            //get cashier cards
+            this.getcards = function () {
+                return this.cardsarr;
+            }
+        }
+        // player object
+
+        function player(num)
+        {
+            this.Pnum = num;
+        this.playercards=[];
+// method that adds card to a player.
+
+        this.addcard = function(c) {
+        this.playercards.push(c)
+            }
+            //method that adds all the cards to player.
+
+        this.addCardsToPlayer = function (arr) {
+                for (var i = 0; i < 8; i++) {
+                    this.addcard(arr.pop());
+            }
+
+        }
+        }
+        //table deck object
+        function TableDeck() {
+            this.tableCards = [];
+            //add new card to table drck
+        this.openCard = function (arr) {
+                this.tableCards.push(arr.pop());
+            }
+            //get the top card
+        this.gettop = function () {
+                return this.tableCards[this.tableCards.length - 1];
+            }
+        }
+        //show title dinamicli
+        function showTitle() {
+            var str = "<h1>";
+            str += " taki game";
+            str += "</h1>";
+            document.getElementById("taki").innerHTML = "taki game";
+        }
+        // method that shows player 1 cards
+
+        function showplayer1(player) {
+            var str = "<table><tr id=\"p1cards\">";
+            for (var i = 0; i < player.playercards.length; i++) {
+                str += "<td onclick =\"delcell(this,'p1cards',p1,td,c1)\"><img src=" + player.playercards[i].pic + "/></td>";
+            }
+            str += "<p><b>player 1 cards:</b></p>"
+            str += "</tr></table>";
+            document.getElementById("player1").innerHTML = str;
+        }
+        //show player 2 cards
+        function showplayer2(player) {
+            var str = "<table><tr id=\"p2cards\">"
+            for (var i = 0; i < player.playercards.length; i++) {
+                str += "<td onclick=\"delcell(this,'p2cards',p2,td,c1) \"><img src=" + player.playercards[i].pic + "/></td>";
+            }
+            str += "<p><b>player 2 cards:</b></p>"
+            str += "</tr></table>";
+            document.getElementById("player2").innerHTML = str;
+        }
+        //method that shows table deck cards
+
+        function showdeck(deck) {
+            var str = "<table><tr>"
+            str += "<td><img src=" + deck.tableCards[deck.tableCards.length-1].pic + "/></td>";
+            str += "<p><b>table deck first card:</b></p>"
+            str += "</tr></table>";
+            document.getElementById("Deck").innerHTML = str;
+        }
+
+        //show cashier first card dinamicly
+        function showcashier(cass) {
+            var str = "<table><tr>"
+            str += "<td><img src=" + cass.cardsarr[cass.cardsarr.length - 1].pic + "/></td>";
+            str += "<p><b>cashier first card:</b></p>"
+            str += "</tr></table>";
+            document.getElementById("cass").innerHTML = str;
+        }
+
+        //---card from player to deck---
+        function removeFromPalyerAddToDeck(i,player,deck) {
+            var card = player.playercards[i];
+            player.playercards.splice(i, 1);
+            deck.tableCards.push(card);
+
+        }
+        //check if the card the olayer is about to put is ligale
+        function checkCardLigality(card, deck) {
+            if (card.type == deck.gettop().type || card.color == deck.gettop().color || card.type == 'color') {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        //add card to player
+        function showPlayerNewCard(player, cass) {
+            
+            var tmp = cass.cardsarr.pop();
+            player.playercards.push(tmp);
+            if (player.Pnum == 1)
+            {
+            showplayer1(player);
+            }
+            if (player.Pnum == 2)
+            {
+            showplayer2(player);
+            }
+           showcashier(cass);
+        }
+
+        // checking if card type is two plus
+
+        function checkPlus(deck) {
+            if (deck.gettop().type == '2plush') 
+            {
+                return true;
+            }
+            else 
+            {
+                return false;
+            }
+        }
+
+        // adding two cards to a player
+
+        function addTwo(player,cass)
+        {
+            showPlayerNewCard(player, cass);
+            showPlayerNewCard(player, cass);
+        }
+
+      // ---- swichplayers---
+
+        //method that gives the turn to the player
+        function swichtoPlayer(player) {
+            var cardcell1 = document.getElementById('p1cards');
+            
+                for (var i = 0; i < cardcell1.children.length; i++) {
+                 cardcell1.children[i].style.display = '';
+            }
+            Timer();
+            }
+            
+        
+
+        //method that gives the turn to the computer
+        function swichtocomputer(player, deck,cass)
+            {
+            var cardcell1 = document.getElementById('p1cards');
+
+            for (var i = 0; i < cardcell1.children.length; i++) {
+                cardcell1.children[i].style.display = 'none';
+            }
+            clearInterval(downloadTimer);
+            const myTimeout = setTimeout(compPlayer2, 2000, p2, td, c1);
+            //clearTimeout(myTimeout);
+            //compPlayer2(p2, td, c1);
+
+        }
+
+
+        function getTimeLeftP1() {
+            var timeout = setTimeout(function () { }, 3600 * 1000);
+
+            setInterval(function () {
+                console.log('Time left: ' + getTimeLeft(timeout) + 's');
+            }, 2000);
+
+
+
+        }
+   
+
+        function getTimeLeft(timeout) {
+            return Math.ceil((timeout._idleStart + timeout._idleTimeout - Date.now()) / 1000);
+        }
+
+
+
+      // ----- all the game clicks-----
+        //method that combines all the checks for the player
+        function delcell(elmnt, rowid, player, deck, cass) {
+            if (checkcassempty(cass) == true) {
+                refillcass(cass, deck);
+            }
+            var cardcell = document.getElementById(rowid);
+            var indx;
+            savearrays(p2);
+ 
+            for (var i = 0; i < cardcell.children.length; i++) {
+                if (cardcell.children[i] == elmnt) {
+                    indx = i;
+                }
+            }
+                
+
+            var card = player.playercards[indx];
+            if (checkCardLigality(card, deck) == true) {
+                cardcell.deleteCell(indx);
+                removeFromPalyerAddToDeck(indx, player, deck);
+                showdeck(deck);
+                if (checkDouble(deck) == false) {
+                    swichtocomputer(player, deck, cass);
+                }
+               
+        
+
+        if(checkTakiType(deck)==true)
+        {
+            var color = checkTakiColor(deck);
+            for(var i=0;i<player.playercards.length;i++)
+            {
+                if(player.playercards[i].color== color)
+                {
+                 cardcell.deleteCell(i);
+                 removeFromPalyerAddToDeck(i, player, deck);
+            
+                }
+            }
+                showdeck(deck);
+            swichtocomputer(player, deck, cass);
+        }
+                if (checkchenger(deck) == true) {
+                    var colorchoose = 'a';
+                    while (!colors.includes(colorchoose))
+                    {
+                        var colorchoose = prompt("please enter color to swich, please write in lowwer case");
+                    }
+                    console.log(colorchoose);
+                    deck.gettop().color = colorchoose;
+                    swichtocomputer(player, deck, cass);
+                }
+    }
+
+            else {
+                showPlayerNewCard(player, cass);
+                swichtocomputer(player, deck, cass);
+            }
+            
+            if (checkwinner(p1,p2) == true) {
+                return;
+            }
+
+          
+        }
+
+        // checking if card type is taki
+        function checkTakiType(deck) 
+        {
+            if(deck.gettop().type=='taki')
+            {   
+            return true;
+            }
+            else
+            {
+            return false;
+            }
+        }
+
+        //check taki color (if player puts it)
+        function checkTakiColor(deck) 
+        {
+        return deck.gettop().color;
+        }
+                
+        function checkcassempty(cass) {
+            if (cass.cardsarr.length == 1) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        // refilling the cashier cards
+        function refillcass(cass, deck) {
+            for (var i = 0; i < deck.tableCards.length - 1; i++) {
+                cass.cardsarr.push(deck.tableCards.pop());
+            }
+            
+            deck.tableCards = deck.tableCards[deck.tableCards.length - 1];
+            cass.shufflecards();
+                
+        }
+
+        // checking if card type is changediriction or stop
+        function checkDouble(deck)
+        {
+            if(deck.gettop().type == 'changesDirection' || deck.gettop().type == 'stop')
+            {
+                clearInterval(downloadTimer);
+                Timer();
+            return true;
+            }
+            else
+            {
+            return false;
+            }
+        }
+
+        //check if the player put color changer
+        function checkchenger(deck) {
+            if (deck.gettop().type == 'color') {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        // method that check which player is winner
+
+        function checkwinner(player1, player2) {
+            if (player1.playercards.length == 0) {
+                alert("player 1 is the  winner, please press OK!");
+                clearInterval(downloadTimer);
+                localStorage.clear();
+                location.reload();
+                start();
+                return true;
+            } 
+            else {
+                if (player2.playercards.length == 0) {
+                    alert("player 2 is the  winner, please press OK!");
+                    clearInterval(downloadTimer);
+                    localStorage.clear();
+                    location.reload();
+                    start();
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+
+
+//variables for Timer
+        var timeleft;
+        var downloadTimer=0;
+
+        //function that make timer 
+        function Timer() {
+       timeleft = 20;
+       downloadTimer = setInterval(function () {
+                if (timeleft <= 0) {
+                    showPlayerNewCard(p1, c1);
+                    swichtocomputer(p2, td, c1);
+                    
+                }
+                document.getElementById("progressBar").value = 20 - timeleft;
+                timeleft -= 1;
+            }, 1000);
+        }
+
+
+
+
+        //player 2 functions-----
+        // method that combines all the check for computer player
+
+        function compPlayer2(player, deck,cass)
+        {
+            clearInterval(downloadTimer);
+            if (checkcassempty(cass) == true) {
+                refillcass(cass, deck);
+            }
+          
+            savearrays(p1);
+            if (checkPlus(deck) == true) {
+                for (var i = 0; i < 2; i++) {
+                    p2.playercards.push(cass.cardsarr.pop());
+                }
+                showcashier(cass);
+            }
+            var c = checkcompgottaki(player, deck);
+            if (c != false) {
+                var todel= [];
+                deck.tableCards.push(c);
+                for (var i = 0; i < player.playercards.length; i++) {
+                    if (player.playercards[i].color == c.color) {
+                     
+                        todel.push(player.playercards[i]);
+                    }
+                }
+                for (var i = 0; i < todel.length; i++) {
+                    deck.tableCards.push(todel[i]);
+                }
+                showdeck(deck);
+                for (var i = 0; i < todel.length; i++) {
+                    for (var j = 0; j < player.playercards.length; j++) {
+                        if (player.playercards[j].type == todel[i].type && player.playercards[j].color == todel[i].color) {
+
+                            player.playercards.splice(j, 1)
+                        }
+                    }
+                }
+                swichtoPlayer(player);
+            }
+
+            else {
+                c = checkcompgotStop(player, deck);
+                if (c != false) {
+                    deck.tableCards.push(c);
+                    showdeck(deck);
+                    swichtocomputer(player, deck, cass);
+
+                }
+
+                else {
+                        c = checkcompgotChangesDirection(player, deck);
+                    if (c != false) {
+                        deck.tableCards.push(c);
+                        showdeck(deck);
+                        swichtocomputer(player, deck, cass);
+        
+                    }
+
+                    else {
+                        c = checkcompgot2plush(player, deck);
+                        if (c != false) {
+                            deck.tableCards.push(c);
+                            showdeck(deck);
+                            addTwo(p1, cass);
+                            swichtoPlayer(player);
+
+                        }
+                        else
+                        {
+                            c = checkSameColor(player, deck)
+                            if (c != false) {
+                                deck.tableCards.push(c);
+                                showdeck(deck);
+                                swichtoPlayer(player);
+
+                                 }
+                             else
+                             {
+                                 c = checkSameType(player, deck);
+                                if (c!=false)
+                                {
+                                    deck.tableCards.push(c);
+                                    showdeck(deck);
+                                    swichtoPlayer(player);
+
+                                    }
+                                    else
+                                {
+                                    c = checkcompcolorchanger(player, deck);
+                                    if (c != false) {
+                                        deck.tableCards.push(c);
+                                        showdeck(deck);
+                                        swichtoPlayer(player);
+
+                                    }
+                                    else {
+                                        takeCard(player, cass);
+                                        swichtoPlayer(player);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+
+
+        //checks if computer player can put taki and have 2 more cards in the same color
+        function checkcompgottaki(player, deck) {
+            var counter = 0;
+            var inx = 0;
+            if (deck.gettop().type == "taki") {
+                for (var i = 0; i < player.playercards.length; i++) {
+                    if (player.playercards[i].type == 'taki') {
+                        for (var j = 0; j < player.playercards.length; j++) {
+                            if (player.playercards[j].color == player.playercards[i].color) {
+                                counter++;
+                            }
+                            if (counter > 2) {
+                                d = player.playercards.splice(i, 1);
+                                return d[0];
+                            }
+                        }
+                     
+                    }
+                }
+            }
+            else {
+
+                for (var i = 0; i < player.playercards.length; i++) {
+                    if (player.playercards[i].type == 'taki' && player.playercards[i].color == deck.gettop().color) {
+                        for (var j = 0; j < player.playercards.length; j++) {
+                            if (player.playercards[j].color == deck.gettop().color) {
+                                counter++;
+                            }
+                            if (counter > 2) {
+                                d = player.playercards.splice(i, 1);
+                                return d[0];
+                            }
+                        }
+                    }
+                }  
+                
+            }
+            return false;
+        }
+        
+        // method that checks if computer player has a stop card
+
+        function checkcompgotStop(player, deck)
+        {
+            if (deck.gettop().type == "stop") {
+                for (var i = 0; i < player.playercards.length; i++) {
+                    if (player.playercards[i].type == 'stop') {
+                        d = player.playercards.splice(i, 1)
+                        return d[0];
+                    }
+                }
+            }
+            else {
+
+                for (var i = 0; i < player.playercards.length; i++) {
+                    if (player.playercards[i].type == 'stop' && player.playercards[i].color == deck.gettop().color) {
+                        d = player.playercards.splice(i, 1)
+                        return d[0];
+                    }
+                }
+                
+            } 
+            return false;
+        }
+        
+        // method that checks if computer player has a change direction card
+
+        function checkcompgotChangesDirection(player, deck) {
+            if (deck.gettop().type == "changesDirection") {
+                for (var i = 0; i < player.playercards.length; i++) {
+                    if (player.playercards[i].type == 'changesDirection') {
+                        d = player.playercards.splice(i, 1)
+                        return d[0];
+                    }
+                }
+            }
+            else {
+
+                for (var i = 0; i < player.playercards.length; i++) {
+                    if (player.playercards[i].type == 'changesDirection' && player.playercards[i].color == deck.gettop().color) {
+                        d = player.playercards.splice(i, 1)
+                        return d[0];
+                    }
+                }
+                
+            }
+            return false;
+        }
+
+       // method that checks if computer player has a 2 plus card
+        function checkcompgot2plush(player, deck) {
+            if (deck.gettop().type == "2plush") {
+                for (var i = 0; i < player.playercards.length; i++) {
+                    if (player.playercards[i].type == '2plush') {
+                        d = player.playercards.splice(i, 1)
+                        return d[0];
+                    }
+                }
+            }
+            else {
+
+                for (var i = 0; i < player.playercards.length; i++) {
+                    if (player.playercards[i].type == '2plush' && player.playercards[i].color == deck.gettop().color) {
+                        d = player.playercards.splice(i, 1)
+                        return d[0];
+                    }
+                }
+              
+            }
+            return false;
+
+        }
+
+        //checks if computer player have card with same color as table deck to put
+        function checkSameColor(player, deck) {
+            for (var i = 0; i < player.playercards.length; i++) {
+                if (player.playercards[i].color == deck.gettop().color && player.playercards[i].type != 'taki') {
+        c = player.playercards.splice(i,1);
+                    return c[0];
+                }
+            }
+            return false;
+        }
+
+        // method that checks if computer player has a card that is the same type as table deck first card
+          function checkSameType(player, deck) {
+            for (var i = 0; i < player.playercards.length; i++) {
+                if (player.playercards[i].type == deck.gettop().type && player.playercards[i].type != 'taki') {
+         c = player.playercards.splice(i,1);
+                    return c[0];
+                }
+            }
+            return false;
+        }
+
+        // method that checks if computer player has a color changer card
+        function checkcompcolorchanger(player, deck)
+        {
+            var countercolor = [];
+            countercolor["blue"] = 0;
+            countercolor["red"] = 0;
+            countercolor["yellow"] = 0;
+            countercolor["green"] = 0;
+            for (var i = 0; i < player.playercards.length; i++) {
+                if (player.playercards[i].type == "color") {
+                    c = player.playercards.splice(i, 1);
+                    for (var j = 0; j < player.playercards.length; j++) {
+                        if (player.playercards[j].type != "color") {
+                            countercolor[player.playercards[j].color]++;
+                        }
+                    }
+                    var max = 0;
+                    var maxcolor = "";
+                    for (var k in countercolor) {
+                        if (countercolor[k] >= max) {
+                            max = countercolor[k]
+                            maxcolor = k;
+                        }
+
+                    }
+                    
+                    c[0].color = maxcolor;
+                    alert('table deck first color is' + maxcolor);
+                    return c[0];
+                }
+                return false;
+            }
+        }
+
+        //method that adds cards to player from cashier
+            function takeCard(player, cass) {
+                player.playercards.push(cass.cardsarr.pop());
+                showcashier(cass);
+            }
+
+        //method that save the arays to the local storage
+        function savearrays(player) {
+            localStorage.setItem("tabledeck", JSON.stringify(td.tableCards));
+            localStorage.setItem("cashier", JSON.stringify(c1.cardsarr));
+            localStorage.setItem("player1", JSON.stringify(p1.playercards));
+            localStorage.setItem("player2", JSON.stringify(p2.playercards));
+            
+        }
+            
+       
+        function start() {
+           
+            c1 = new cashier();
+            p1 = new player(1);
+            p2 = new player(2);
+            td = new TableDeck();
+
+
+            if (localStorage.getItem('player1') === null || localStorage.getItem('player2') === null || localStorage.getItem('cashier') === null || localStorage.getItem('tabledeck') === null ) {
+                c1.createcards();
+                c1.shufflecards();
+                p1.addCardsToPlayer(c1.cardsarr)
+                p2.addCardsToPlayer(c1.cardsarr)
+                td.openCard(c1.cardsarr);
+
+            }
+
+            else {
+                c1.cardsarr = JSON.parse(localStorage["cashier"]);
+                td.tableCards = JSON.parse(localStorage["tabledeck"]);
+                p1.playercards = JSON.parse(localStorage["player1"]);
+               p2.playercards = JSON.parse(localStorage["player2"]);
+            }
+
+                showplayer1(p1);
+              
+                showdeck(td);
+                showcashier(c1);
+                console.log(p1);
+                console.log(p2);
+                console.log(td);
+                console.log(c1);
+        }
+    </script>
+    <link href="MyStyle.css" rel="stylesheet" />
+</head>
+<body onload="start()">
+    <div id="container">
+      <!--game--> 
+        <div id="gamezone">
+
+            <div id="player1">
+              
+            </div>
+
+            <div id="time" >
+               
+            </div>
+
+            <div id="player2">
+                <h1> time left</h1>
+                <progress value="0" max="20" id="progressBar"></progress>
+            </div>
+        </div>
+        <div id="hey">
+
+            <div id="Deck" >
+            </div>
+
+            <div id="cass">
+
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

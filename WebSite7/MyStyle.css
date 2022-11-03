@@ -1,0 +1,100 @@
+﻿#container {
+    width: 100%;
+    height: 1000px;
+    background-image: url("images/uno bg.jpg");
+}
+
+img {
+    width: 100px;
+}
+
+p {
+    border: 5px solid white;
+    font-size: 50px;
+}
+
+#player1 {
+    height: 250px;
+    margin-left: 15px;
+    display: inline;
+    float: left;
+    font-size: 45px;
+    color: white;
+}
+
+    #player1 img {
+        height: 100px;
+        width: 75px;
+    }
+
+#player2 {
+    float: right;
+    height: 250px;
+    display: inline;
+    font-size: 45px;
+    color: white;
+}
+
+    #player2 img {
+        height: 100px;
+        width: 75px;
+    }
+
+
+#cass {
+    margin-left: 15px;
+    display: inline;
+    float: left;
+   margin-top: 400px;
+    font-size: 45px;
+    color: white;
+}
+
+    #cass img {
+        text-align: center;
+        margin-left: 100px;
+        height: 150px;
+        width: 100px;
+    }
+
+#Deck {
+    display: inline;
+    float: right;
+    margin-top: 400px;
+    margin-right: 75px;
+    font-size: 45px;
+    color: white;
+}
+
+    #Deck img {
+        text-align: center;
+        margin-left: 150px;
+        height: 150px;
+        width: 100px;
+    }
+
+#gamezone {
+    float: none;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    height: 23px;
+}
+
+#hey {
+    float: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    height: 23px;
+}
+
+#time{
+    position : fixed;
+    left:100px;
+}
